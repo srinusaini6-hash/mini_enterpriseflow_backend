@@ -10,8 +10,6 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 
-from datetime import datetime
-
 from app.database.database import Base
 
 
@@ -43,7 +41,14 @@ class Task(Base):
 
     created_by = Column(Integer)
 
-    # ✅ Soft Delete Fields
+    # TASK 4 FIELDS
+    sla_status = Column(String, nullable=True)
+
+    sla_due_time = Column(DateTime, nullable=True)
+
+    is_sla_breached = Column(Boolean, default=False)
+
+    # SOFT DELETE
     is_deleted = Column(
         Boolean,
         default=False
@@ -54,5 +59,5 @@ class Task(Base):
         nullable=True
     )
 
-    # Relationship
+    # RELATIONSHIP
     assigned_user = relationship("User")

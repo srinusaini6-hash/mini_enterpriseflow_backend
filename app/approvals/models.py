@@ -2,7 +2,9 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Text
+    Text,
+    Boolean,
+    DateTime
 )
 
 from app.database.database import Base
@@ -28,6 +30,16 @@ class ApprovalRequest(Base):
 
     comments = Column(Text)
 
+    # TASK 4 FIELDS
+    sla_status = Column(String, nullable=True)
+
+    sla_due_time = Column(DateTime, nullable=True)
+
+    is_escalated = Column(Boolean, default=False)
+
+    current_escalation_to = Column(Integer, nullable=True)
+
+
 class ApprovalHistory(Base):
 
     __tablename__ = "approval_history"
@@ -40,4 +52,4 @@ class ApprovalHistory(Base):
 
     comment = Column(Text)
 
-    action_by = Column(Integer)    
+    action_by = Column(Integer)

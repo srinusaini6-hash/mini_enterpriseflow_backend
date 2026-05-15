@@ -4,11 +4,12 @@ from fastapi import (
     HTTPException,
     Query
 )
-from app.utils.pagination import paginate
 
 from sqlalchemy.orm import Session
 
 from datetime import datetime
+
+from app.utils.pagination import paginate
 
 from app.database.database import get_db
 
@@ -24,8 +25,6 @@ from app.auth.dependencies import get_current_user
 from app.users.models import User
 
 from app.notifications.service import create_notification
-
-from app.history.service import create_history
 
 
 router = APIRouter(
@@ -72,7 +71,8 @@ def create_task(
     )
 
     return {
-        "message": "Task created successfully"
+        "message": "Task created successfully",
+        "task_id": new_task.id
     }
 
 
@@ -95,26 +95,31 @@ def get_tasks(
         Task.is_deleted == False
     )
 
-    # ---------- FILTER STATUS ----------
+    # FILTER STATUS
     if status:
+
         query = query.filter(
             Task.status == status
         )
 
-    # ---------- FILTER PRIORITY ----------
+    # FILTER PRIORITY
     if priority:
+
         query = query.filter(
             Task.priority == priority
         )
 
-    # ---------- SORTING ----------
+    # SORTING
     if sort_by == "title":
+
         query = query.order_by(Task.title)
 
     elif sort_by == "priority":
+
         query = query.order_by(Task.priority)
 
     else:
+
         query = query.order_by(Task.id)
 
     return paginate(
@@ -122,6 +127,7 @@ def get_tasks(
         page,
         limit
     )
+
 
 # ------------------- UPDATE TASK -------------------
 @router.put("/{task_id}")
@@ -151,6 +157,7 @@ def update_task(
             detail="Invalid status"
         )
 
+    # AUTHORIZATION
     if (
         current_user.role != "admin"
         and existing_task.assigned_to != current_user.id
@@ -161,40 +168,15 @@ def update_task(
             detail="Not allowed"
         )
 
-    # ---------- STORE OLD VALUES ----------
-    old_status = existing_task.status
-    old_priority = existing_task.priority
-
-    # ---------- UPDATE VALUES ----------
+    # UPDATE VALUES
     existing_task.title = task.title
     existing_task.description = task.description
     existing_task.priority = task.priority
     existing_task.status = task.status
 
-    # ---------- HISTORY TRACKING ----------
-    if old_status != task.status:
-
-        create_history(
-            db,
-            existing_task.id,
-            current_user.id,
-            "status",
-            old_status,
-            task.status
-        )
-
-    if old_priority != task.priority:
-
-        create_history(
-            db,
-            existing_task.id,
-            current_user.id,
-            "priority",
-            old_priority,
-            task.priority
-        )
-
     db.commit()
+
+    db.refresh(existing_task)
 
     return {
         "message": "Task updated successfully"
