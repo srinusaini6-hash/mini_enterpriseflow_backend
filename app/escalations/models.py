@@ -1,11 +1,9 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    DateTime
-)
-
 from datetime import datetime
+
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
+)
 
 from app.database.database import Base
 
@@ -14,33 +12,29 @@ class ApprovalEscalation(Base):
 
     __tablename__ = "approval_escalations"
 
-    id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(
         primary_key=True,
         index=True
     )
 
-    approval_id = Column(Integer)
+    approval_id: Mapped[int] = mapped_column()
 
-    escalated_from = Column(Integer)
+    escalated_from: Mapped[int] = mapped_column()
 
-    escalated_to = Column(Integer)
+    escalated_to: Mapped[int] = mapped_column()
 
-    reason = Column(
-        String(255)
+    reason: Mapped[str] = mapped_column(
+        nullable=False
     )
 
-    escalation_level = Column(
-        Integer,
+    escalation_level: Mapped[int] = mapped_column(
         default=1
     )
 
-    status = Column(
-        String(50),
+    status: Mapped[str] = mapped_column(
         default="PENDING"
     )
 
-    escalated_at = Column(
-        DateTime,
+    escalated_at: Mapped[datetime] = mapped_column(
         default=datetime.utcnow
     )

@@ -1,12 +1,9 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    Boolean,
-    DateTime
-)
-
 from datetime import datetime
+
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
+)
 
 from app.database.database import Base
 
@@ -15,30 +12,25 @@ class ApprovalDelegation(Base):
 
     __tablename__ = "approval_delegations"
 
-    id = Column(
-        Integer,
+    id: Mapped[int] = mapped_column(
         primary_key=True,
         index=True
     )
 
-    delegator_id = Column(Integer)
+    delegator_id: Mapped[int] = mapped_column()
 
-    delegatee_id = Column(Integer)
+    delegatee_id: Mapped[int] = mapped_column()
 
-    start_date = Column(DateTime)
+    start_date: Mapped[datetime] = mapped_column()
 
-    end_date = Column(DateTime)
+    end_date: Mapped[datetime] = mapped_column()
 
-    reason = Column(
-        String(255)
-    )
+    reason: Mapped[str] = mapped_column()
 
-    is_active = Column(
-        Boolean,
+    is_active: Mapped[bool] = mapped_column(
         default=True
     )
 
-    created_at = Column(
-        DateTime,
+    created_at: Mapped[datetime] = mapped_column(
         default=datetime.utcnow
     )

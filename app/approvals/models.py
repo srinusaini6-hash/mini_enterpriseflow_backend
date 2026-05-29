@@ -1,10 +1,14 @@
 from sqlalchemy import (
-    Column,
     Integer,
     String,
     Text,
     Boolean,
     DateTime
+)
+
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
 )
 
 from app.database.database import Base
@@ -14,42 +18,87 @@ class ApprovalRequest(Base):
 
     __tablename__ = "approval_requests"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-    request_type = Column(String(100))
+    request_type: Mapped[str] = mapped_column(
+        String(100)
+    )
 
-    reason = Column(Text)
+    reason: Mapped[str] = mapped_column(
+        Text
+    )
 
-    amount = Column(Integer)
+    amount: Mapped[int] = mapped_column(
+        Integer
+    )
 
-    status = Column(String(50), default="PENDING")
+    status: Mapped[str] = mapped_column(
+        String(50),
+        default="PENDING"
+    )
 
-    submitted_by = Column(Integer)
+    submitted_by: Mapped[int] = mapped_column(
+        Integer
+    )
 
-    current_approver = Column(String(50))
+    current_approver: Mapped[str] = mapped_column(
+        String(50)
+    )
 
-    comments = Column(Text)
+    comments: Mapped[str] = mapped_column(
+        Text,
+        nullable=True
+    )
 
     # TASK 4 FIELDS
-    sla_status = Column(String, nullable=True)
 
-    sla_due_time = Column(DateTime, nullable=True)
+    sla_status: Mapped[str] = mapped_column(
+        String(50),
+        nullable=True
+    )
 
-    is_escalated = Column(Boolean, default=False)
+    sla_due_time: Mapped[DateTime] = mapped_column(
+        DateTime,
+        nullable=True
+    )
 
-    current_escalation_to = Column(Integer, nullable=True)
+    is_escalated: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False
+    )
+
+    current_escalation_to: Mapped[int] = mapped_column(
+        Integer,
+        nullable=True
+    )
 
 
 class ApprovalHistory(Base):
 
     __tablename__ = "approval_history"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(
+        Integer,
+        primary_key=True,
+        index=True
+    )
 
-    request_id = Column(Integer)
+    request_id: Mapped[int] = mapped_column(
+        Integer
+    )
 
-    action = Column(String(50))
+    action: Mapped[str] = mapped_column(
+        String(50)
+    )
 
-    comment = Column(Text)
+    comment: Mapped[str] = mapped_column(
+        Text
+    )
 
-    action_by = Column(Integer)
+    action_by: Mapped[int] = mapped_column(
+        Integer
+    )

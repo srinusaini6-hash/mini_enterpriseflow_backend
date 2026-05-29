@@ -1,89 +1,95 @@
+from datetime import datetime
+
 from sqlalchemy import (
-    Column,
     Integer,
     String,
     DateTime
 )
 
-from datetime import datetime
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column
+)
 
 from app.database.database import Base
 
 
 # ---------------- DEPARTMENT MODEL ----------------
+
 class Department(Base):
 
     __tablename__ = "departments"
 
-    id = Column(
+    id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
         index=True
     )
 
-    name = Column(
+    name: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
 
-    description = Column(
+    description: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True
     )
 
-    created_at = Column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
     )
 
 
 # ---------------- AUDIT LOG MODEL ----------------
+
 class AuditLog(Base):
 
     __tablename__ = "audit_logs"
 
-    id = Column(
+    id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
         index=True
     )
 
-    module_name = Column(
+    module_name: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
 
-    action_type = Column(
+    action_type: Mapped[str] = mapped_column(
         String(100),
         nullable=False
     )
 
-    record_id = Column(
+    record_id: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True
     )
 
-    old_data = Column(
+    old_data: Mapped[str | None] = mapped_column(
         String(1000),
         nullable=True
     )
 
-    new_data = Column(
+    new_data: Mapped[str | None] = mapped_column(
         String(1000),
         nullable=True
     )
 
-    ip_address = Column(
+    ip_address: Mapped[str | None] = mapped_column(
         String(100),
         nullable=True
     )
 
-    user_agent = Column(
+    user_agent: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True
     )
 
-    created_at = Column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.utcnow
     )

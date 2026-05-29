@@ -1,25 +1,30 @@
 from fastapi import (
     APIRouter,
-    Depends,
-    HTTPException
+    Depends
 )
 
 from sqlalchemy.orm import Session
 
+from fastapi_pagination import Page
+
 from app.database.database import get_db
 
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import (
+    get_current_user
+)
 
 from app.users.models import User
 
-from app.comments.models import (
-    Comment,
-    CommentReply
-)
-
 from app.comments.schemas import (
     CommentCreate,
-    ReplyCreate
+    ReplyCreate,
+    CommentResponse
+)
+
+from app.comments.services import (
+    add_comment_service,
+    get_comments_service,
+    reply_comment_service
 )
 
 router = APIRouter(
@@ -37,36 +42,29 @@ def add_comment(
     current_user: User = Depends(get_current_user)
 ):
 
-    comment = Comment(
-        task_id=data.task_id,
-        user_id=current_user.id,
-        comment_text=data.comment_text
+    return add_comment_service(
+        db,
+        data,
+        current_user
     )
-
-    db.add(comment)
-
-    db.commit()
-
-    db.refresh(comment)
-
-    return {
-        "message": "Comment added successfully"
-    }
 
 
 # ---------------- GET COMMENTS ----------------
 
-@router.get("/{task_id}")
+@router.get(
+    "/{task_id}",
+    response_model=Page[CommentResponse]
+)
 def get_comments(
     task_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
 
-    comments = db.query(Comment).filter(
-        Comment.task_id == task_id
-    ).all()
-
-    return comments
+    return get_comments_service(
+        db,
+        task_id
+    )
 
 
 # ---------------- REPLY COMMENT ----------------
@@ -78,27 +76,8 @@ def reply_comment(
     current_user: User = Depends(get_current_user)
 ):
 
-    comment = db.query(Comment).filter(
-        Comment.id == data.comment_id
-    ).first()
-
-    if not comment:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Comment not found"
-        )
-
-    reply = CommentReply(
-        comment_id=data.comment_id,
-        user_id=current_user.id,
-        reply_text=data.reply_text
+    return reply_comment_service(
+        db,
+        data,
+        current_user
     )
-
-    db.add(reply)
-
-    db.commit()
-
-    return {
-        "message": "Reply added successfully"
-    }

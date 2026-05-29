@@ -1,18 +1,21 @@
 from fastapi import (
     APIRouter,
-    Depends,
-    HTTPException
+    Depends
 )
 
 from sqlalchemy.orm import Session
 
-from datetime import datetime
+from fastapi_pagination import Page
 
 from app.database.database import get_db
 
-from app.escalations.models import (
-    ApprovalEscalation
+from app.escalations.schemas import (
+    ApprovalEscalationCreate,
+    ApprovalEscalationResponse
 )
+
+from app.escalations import services
+
 
 router = APIRouter(
     prefix="/approval-escalations",
@@ -21,89 +24,58 @@ router = APIRouter(
 
 
 # ---------------- CREATE ESCALATION ----------------
+
 @router.post("/")
 def create_escalation(
-    approval_id: int,
-    escalated_from: int,
-    escalated_to: int,
-    reason: str,
+    data: ApprovalEscalationCreate,
     db: Session = Depends(get_db)
 ):
 
-    escalation = ApprovalEscalation(
-        approval_id=approval_id,
-        escalated_from=escalated_from,
-        escalated_to=escalated_to,
-        reason=reason,
-        escalation_level=1,
-        status="PENDING",
-        escalated_at=datetime.utcnow()
+    return services.create_escalation_service(
+        data,
+        db
     )
-
-    db.add(escalation)
-
-    db.commit()
-
-    db.refresh(escalation)
-
-    return {
-        "message": "Approval escalated successfully",
-        "data": escalation
-    }
 
 
 # ---------------- GET ALL ESCALATIONS ----------------
-@router.get("/")
+
+@router.get(
+    "/",
+    response_model=Page[ApprovalEscalationResponse]
+)
 def get_escalations(
     db: Session = Depends(get_db)
 ):
 
-    escalations = db.query(
-        ApprovalEscalation
-    ).all()
-
-    return escalations
+    return services.get_escalations_service(
+        db
+    )
 
 
 # ---------------- GET PENDING ESCALATIONS ----------------
-@router.get("/pending")
+
+@router.get(
+    "/pending",
+    response_model=Page[ApprovalEscalationResponse]
+)
 def get_pending_escalations(
     db: Session = Depends(get_db)
 ):
 
-    pending = db.query(
-        ApprovalEscalation
-    ).filter(
-        ApprovalEscalation.status == "PENDING"
-    ).all()
-
-    return pending
+    return services.get_pending_escalations_service(
+        db
+    )
 
 
 # ---------------- RESOLVE ESCALATION ----------------
+
 @router.put("/{escalation_id}/resolve")
 def resolve_escalation(
     escalation_id: int,
     db: Session = Depends(get_db)
 ):
 
-    escalation = db.query(
-        ApprovalEscalation
-    ).filter(
-        ApprovalEscalation.id == escalation_id
-    ).first()
-
-    if not escalation:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Escalation not found"
-        )
-
-    escalation.status = "RESOLVED"
-
-    db.commit()
-
-    return {
-        "message": "Escalation resolved successfully"
-    }
+    return services.resolve_escalation_service(
+        escalation_id,
+        db
+    )

@@ -1,18 +1,25 @@
 from fastapi import (
     APIRouter,
-    Depends,
-    HTTPException
+    Depends
 )
 
 from sqlalchemy.orm import Session
 
+from fastapi_pagination import Page
+
 from app.database.database import get_db
 
-from app.notifications.models import Notification
-
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import (
+    get_current_user
+)
 
 from app.users.models import User
+
+from app.notifications.schemas import (
+    NotificationResponse
+)
+
+from app.notifications import services
 
 
 router = APIRouter(
@@ -22,20 +29,24 @@ router = APIRouter(
 
 
 # ---------------- GET NOTIFICATIONS ----------------
-@router.get("/")
+
+@router.get(
+    "/",
+    response_model=Page[NotificationResponse]
+)
 def get_notifications(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    notifications = db.query(Notification).filter(
-        Notification.user_id == current_user.id
-    ).all()
-
-    return notifications
+    return services.get_notifications_service(
+        db,
+        current_user
+    )
 
 
 # ---------------- MARK AS READ ----------------
+
 @router.put("/{notification_id}")
 def mark_as_read(
     notification_id: int,
@@ -43,26 +54,15 @@ def mark_as_read(
     current_user: User = Depends(get_current_user)
 ):
 
-    notification = db.query(Notification).filter(
-        Notification.id == notification_id
-    ).first()
-
-    if not notification:
-        raise HTTPException(
-            status_code=404,
-            detail="Notification not found"
-        )
-
-    notification.is_read = True
-
-    db.commit()
-
-    return {
-        "message": "Notification marked as read"
-    }
+    return services.mark_as_read_service(
+        db,
+        notification_id,
+        current_user
+    )
 
 
 # ---------------- DELETE NOTIFICATION ----------------
+
 @router.delete("/{notification_id}")
 def delete_notification(
     notification_id: int,
@@ -70,20 +70,8 @@ def delete_notification(
     current_user: User = Depends(get_current_user)
 ):
 
-    notification = db.query(Notification).filter(
-        Notification.id == notification_id
-    ).first()
-
-    if not notification:
-        raise HTTPException(
-            status_code=404,
-            detail="Notification not found"
-        )
-
-    db.delete(notification)
-
-    db.commit()
-
-    return {
-        "message": "Notification deleted successfully"
-    }
+    return services.delete_notification_service(
+        db,
+        notification_id,
+        current_user
+    )

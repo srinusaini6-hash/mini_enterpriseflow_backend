@@ -1,14 +1,19 @@
+from datetime import datetime
+
 from sqlalchemy import (
-    Column,
-    Integer,
     String,
+    Integer,
     Text,
     ForeignKey,
     Boolean,
     DateTime
 )
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship
+)
 
 from app.database.database import Base
 
@@ -17,47 +22,68 @@ class Task(Base):
 
     __tablename__ = "tasks"
 
-    id = Column(
+    id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
         index=True
     )
 
-    title = Column(String(255))
+    title: Mapped[str] = mapped_column(
+        String(255)
+    )
 
-    description = Column(Text)
+    description: Mapped[str] = mapped_column(
+        Text
+    )
 
-    status = Column(
+    status: Mapped[str] = mapped_column(
         String(50),
         default="TODO"
     )
 
-    priority = Column(String(50))
+    priority: Mapped[str] = mapped_column(
+        String(50)
+    )
 
-    assigned_to = Column(
-        Integer,
+    assigned_to: Mapped[int] = mapped_column(
         ForeignKey("users.id")
     )
 
-    created_by = Column(Integer)
+    created_by: Mapped[int] = mapped_column(
+        Integer
+    )
 
     # TASK 4 FIELDS
-    sla_status = Column(String, nullable=True)
 
-    sla_due_time = Column(DateTime, nullable=True)
+    sla_status: Mapped[str] = mapped_column(
+        String(50),
+        nullable=True
+    )
 
-    is_sla_breached = Column(Boolean, default=False)
+    sla_due_time: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=True
+    )
 
-    # SOFT DELETE
-    is_deleted = Column(
+    is_sla_breached: Mapped[bool] = mapped_column(
         Boolean,
         default=False
     )
 
-    deleted_at = Column(
+    # SOFT DELETE
+
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False
+    )
+
+    deleted_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True
     )
 
     # RELATIONSHIP
-    assigned_user = relationship("User")
+
+    assigned_user = relationship(
+        "User"
+    )

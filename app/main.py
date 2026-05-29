@@ -1,19 +1,48 @@
-from fastapi import FastAPI
+from fastapi import (
+    FastAPI,
+    HTTPException
+)
+
+from fastapi_pagination import (
+    add_pagination
+)
 
 from slowapi.middleware import (
     SlowAPIMiddleware
 )
 
+
 # ---------------- DATABASE ----------------
+
 from app.database.database import (
     engine,
     Base
 )
 
-# ---------------- MODELS ----------------
+
+# ---------------- EXCEPTION HANDLER ----------------
+
+from app.core.exception_handler import (
+    http_exception_handler
+)
+
+
+# ---------------- RATE LIMIT ----------------
+
+from app.middleware.rate_limit import (
+    limiter
+)
+
+
+# ---------------- IMPORT MODELS ----------------
+
 from app.users.models import User
 
 from app.tasks.models import Task
+
+from app.roles.models import Role
+
+from app.permissions.models import Permission
 
 from app.attachments.models import Attachment
 
@@ -32,23 +61,33 @@ from app.admin.models import (
     AuditLog
 )
 
-# ---------------- SLA MODELS ----------------
 from app.sla.models import (
     SLARule,
     SLATracking
 )
 
-# ---------------- ESCALATION MODELS ----------------
 from app.escalations.models import (
     ApprovalEscalation
 )
 
-# ---------------- DELEGATION MODELS ----------------
 from app.delegations.models import (
     ApprovalDelegation
 )
 
-# ---------------- ROUTERS ----------------
+from app.role_permissions.models import RolePermission
+
+from app.tenants.models import Tenant
+
+from app.notifications.models import Notification
+
+from app.subscriptions.models import (
+    SubscriptionPlan,
+    TenantSubscription
+)
+
+# ---------------- IMPORT ROUTERS ----------------
+from app.users.routes import router as user_router
+
 from app.auth.routes import (
     router as auth_router
 )
@@ -93,29 +132,64 @@ from app.audit.routes import (
     router as audit_router
 )
 
-# ---------------- RATE LIMIT ----------------
-from app.middleware.rate_limit import (
-    limiter
+from app.tenants.routes import (
+    router as tenant_router
 )
 
-# ---------------- CREATE TABLES ----------------
-Base.metadata.create_all(
-    bind=engine
+from app.subscriptions.routes import (
+    router as subscription_router
 )
 
-# ---------------- FASTAPI APP ----------------
+from app.tenant_subscriptions.routes import (
+    router as tenant_subscription_router
+)
+
+from app.roles.routes import (
+    router as role_router
+)
+
+from app.permissions.routes import (
+    router as permission_router
+)
+
+from app.role_permissions.routes import (
+    router as role_permission_router
+)
+
+# ---------------- CREATE FASTAPI APP ----------------
+
 app = FastAPI(
-    title="Mini EnterpriseFlow Backend"
+    title="Mini EnterpriseFlow Backend",
+    version="1.0.0"
 )
+
 
 # ---------------- RATE LIMITER ----------------
+
 app.state.limiter = limiter
 
 app.add_middleware(
     SlowAPIMiddleware
 )
 
+
+# ---------------- EXCEPTION HANDLER ----------------
+
+app.add_exception_handler(
+    HTTPException,
+    http_exception_handler
+)
+
+
+# ---------------- CREATE DATABASE TABLES ----------------
+
+Base.metadata.create_all(
+    bind=engine
+)
+
+
 # ---------------- INCLUDE ROUTERS ----------------
+
 app.include_router(auth_router)
 
 app.include_router(task_router)
@@ -138,7 +212,29 @@ app.include_router(delegation_router)
 
 app.include_router(audit_router)
 
+app.include_router(tenant_router)
+
+app.include_router(subscription_router)
+
+app.include_router(
+    tenant_subscription_router
+)
+
+app.include_router(role_router)
+
+app.include_router(permission_router)
+
+app.include_router(role_permission_router)
+
+app.include_router(user_router)
+
+# ---------------- ENABLE PAGINATION ----------------
+
+add_pagination(app)
+
+
 # ---------------- ROOT API ----------------
+
 @app.get("/")
 def root():
 
