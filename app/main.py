@@ -156,6 +156,20 @@ from app.role_permissions.routes import (
     router as role_permission_router
 )
 
+from app.meetings.routes import router as meetings_router
+
+from app.meeting_attendees.routes import router as meeting_attendees_router
+
+from app.availability.router import router as availability_router
+
+from app.meeting_notes.router import router as meeting_notes_router
+
+from app.action_items.router import router as action_items_router
+
+from app.reminders.routes import router as reminder_router
+
+from app.ai_summary.routes import router as ai_summary_router
+
 # ---------------- CREATE FASTAPI APP ----------------
 
 app = FastAPI(
@@ -227,6 +241,20 @@ app.include_router(permission_router)
 app.include_router(role_permission_router)
 
 app.include_router(user_router)
+
+app.include_router(meetings_router)
+
+app.include_router(meeting_attendees_router)
+
+app.include_router(availability_router)
+
+app.include_router(meeting_notes_router)
+
+app.include_router(action_items_router)
+
+app.include_router(reminder_router)
+
+app.include_router(ai_summary_router)
 
 # ---------------- ENABLE PAGINATION ----------------
 
