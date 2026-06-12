@@ -3,6 +3,7 @@ from fastapi import (
     HTTPException
 )
 
+
 from fastapi_pagination import (
     add_pagination
 )
@@ -11,6 +12,7 @@ from slowapi.middleware import (
     SlowAPIMiddleware
 )
 
+from app.reactions.models import Reaction
 
 # ---------------- DATABASE ----------------
 
@@ -170,6 +172,41 @@ from app.reminders.routes import router as reminder_router
 
 from app.ai_summary.routes import router as ai_summary_router
 
+from app.workspaces.routes import router as workspace_router
+
+from app.workspace_members.routes import router as workspace_member_router
+
+from app.channels.routes import router as channel_router
+
+from app.channel_members.routes import router as channel_member_router
+
+from app.messages.routes import router as message_router
+
+from app.reactions.routes import router as reaction_router
+
+from app.replies.models import Reply
+from app.replies.routes import router as reply_router
+
+from app.read_receipts.models import ReadReceipt
+from app.read_receipts.routes import router as read_receipt_router
+
+from app.message_pins.models import MessagePin
+from app.message_pins.routes import router as message_pin_router
+
+from app.conversations.routes import router as conversation_router
+
+from app.message_mentions.router import router as mention_router
+
+from app.presence_status.models import PresenceStatus
+from app.presence_status.routes import router as presence_router
+
+from app.message_search.router import router as message_search_router
+from app.messages.routes import router as message_router
+
+from app.websocket.routes import (
+    router as websocket_router
+)
+
 # ---------------- CREATE FASTAPI APP ----------------
 
 app = FastAPI(
@@ -255,6 +292,40 @@ app.include_router(action_items_router)
 app.include_router(reminder_router)
 
 app.include_router(ai_summary_router)
+
+app.include_router(workspace_router)
+
+app.include_router(workspace_member_router)
+
+app.include_router(channel_router)
+
+app.include_router(channel_member_router)
+
+app.include_router(message_router)
+
+app.include_router(reaction_router)
+
+app.include_router(reply_router)
+
+app.include_router(read_receipt_router)
+
+app.include_router(message_pin_router)
+
+app.include_router(conversation_router)
+
+app.include_router(mention_router)
+
+app.include_router(presence_router)
+
+app.include_router(message_search_router)
+
+app.include_router(message_search_router)
+app.include_router(message_router)
+
+app.include_router(
+    websocket_router
+)
+
 
 # ---------------- ENABLE PAGINATION ----------------
 
