@@ -207,6 +207,51 @@ from app.websocket.routes import (
     router as websocket_router
 )
 
+from app.workflow_templates.models import WorkflowTemplate
+from app.workflow_templates.routes import router as workflow_template_router
+
+from app.workflow_steps.models import WorkflowStep
+from app.workflow_steps.routes import (
+    router as workflow_step_router
+)
+
+from app.workflow_conditions.routes import (
+    router as workflow_conditions_router
+)
+
+from app.workflow_instances.models import WorkflowInstance
+from app.workflow_instance_steps.models import WorkflowInstanceStep
+
+from app.workflow_instances.routes import (
+    router as workflow_execution_router
+)
+
+from app.workflow_actions.routes import router as workflow_actions_router
+
+from app.workflow_assignments.routes import router as assignment_router
+
+from app.workflow_audit_logs.routes import router as audit_log_router
+
+
+from app.workflow_notifications.models import WorkflowNotification
+
+from app.workflow_notifications.routes import (
+    router as workflow_notification_router
+)
+
+from app.workflow_reports.routes import (
+    router as workflow_reports_router
+)
+
+from app.workflow_dashboard.routes import (
+    router as workflow_dashboard_router
+)
+
+from app.workflow_analytics.routes import (
+    router as workflow_analytics_router
+)
+
+
 # ---------------- CREATE FASTAPI APP ----------------
 
 app = FastAPI(
@@ -324,6 +369,40 @@ app.include_router(message_router)
 
 app.include_router(
     websocket_router
+)
+
+app.include_router(workflow_template_router)
+
+app.include_router(
+    workflow_step_router
+)
+
+app.include_router(
+    workflow_conditions_router
+)
+
+app.include_router(
+    workflow_execution_router
+)
+
+app.include_router(workflow_actions_router)
+
+app.include_router(assignment_router)
+
+app.include_router(audit_log_router)
+
+app.include_router(workflow_notification_router)
+
+app.include_router(
+    workflow_reports_router
+)
+
+app.include_router(
+    workflow_dashboard_router
+)
+
+app.include_router(
+    workflow_analytics_router
 )
 
 
