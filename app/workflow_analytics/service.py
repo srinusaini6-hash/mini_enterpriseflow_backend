@@ -4,7 +4,9 @@ from app.workflow_templates.models import WorkflowTemplate
 
 from app.workflow_instances.models import WorkflowInstance
 
-from app.workflow_instance_steps.models import WorkflowInstanceStep
+from app.workflow_instances.workflow_instance_steps.models import (
+    WorkflowInstanceStep
+)
 
 
 def template_usage(db: Session):
@@ -15,10 +17,10 @@ def template_usage(db: Session):
 
     return [
         {
-            "name": t.name,
+            "name": template.name,
             "count": 1
         }
-        for t in templates
+        for template in templates
     ]
 
 

@@ -1,16 +1,12 @@
 from sqlalchemy.orm import Session
 
-from app.workflow_instances.models import (
-    WorkflowInstance
-)
+from app.workflow_instances.models import WorkflowInstance
 
-from app.workflow_instance_steps.models import (
+from app.workflow_instances.workflow_instance_steps.models import (
     WorkflowInstanceStep
 )
 
-from app.workflow_steps.models import (
-    WorkflowStep
-)
+from app.workflow_steps.models import WorkflowStep
 
 
 def start_workflow(
@@ -28,12 +24,15 @@ def start_workflow(
     db.commit()
     db.refresh(workflow_instance)
 
-    workflow_steps = db.query(
-        WorkflowStep
-    ).filter(
-        WorkflowStep.workflow_template_id
-        == workflow_template_id
-    ).all()
+    workflow_steps = (
+        db.query(WorkflowStep)
+        .filter(
+            WorkflowStep.workflow_template_id
+            == workflow_template_id
+        )
+        .order_by(WorkflowStep.step_order)
+        .all()
+    )
 
     for step in workflow_steps:
 
@@ -55,38 +54,46 @@ def get_execution(
     db: Session,
     execution_id: int
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.id == execution_id
-    ).first()
+    return (
+        db.query(WorkflowInstance)
+        .filter(
+            WorkflowInstance.id == execution_id
+        )
+        .first()
+    )
 
 
 def get_pending_executions(
     db: Session
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Pending"
-    ).all()
+    return (
+        db.query(WorkflowInstance)
+        .filter(
+            WorkflowInstance.status == "Pending"
+        )
+        .all()
+    )
 
 
 def get_completed_executions(
     db: Session
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Completed"
-    ).all()
+    return (
+        db.query(WorkflowInstance)
+        .filter(
+            WorkflowInstance.status == "Completed"
+        )
+        .all()
+    )
 
 
 def get_rejected_executions(
     db: Session
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Rejected"
-    ).all()
+    return (
+        db.query(WorkflowInstance)
+        .filter(
+            WorkflowInstance.status == "Rejected"
+        )
+        .all()
+    )

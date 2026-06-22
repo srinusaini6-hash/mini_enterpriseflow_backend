@@ -220,7 +220,7 @@ from app.workflow_conditions.routes import (
 )
 
 from app.workflow_instances.models import WorkflowInstance
-from app.workflow_instance_steps.models import WorkflowInstanceStep
+from app.workflow_instances.workflow_instance_steps.models import WorkflowInstanceStep
 
 from app.workflow_instances.routes import (
     router as workflow_execution_router
