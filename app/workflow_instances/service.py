@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_instances.models import WorkflowInstance
 
@@ -24,15 +25,20 @@ def start_workflow(
     db.commit()
     db.refresh(workflow_instance)
 
-    workflow_steps = (
-        db.query(WorkflowStep)
-        .filter(
+    stmt = (
+        select(WorkflowStep)
+        .where(
             WorkflowStep.workflow_template_id
             == workflow_template_id
         )
-        .order_by(WorkflowStep.step_order)
-        .all()
+        .order_by(
+            WorkflowStep.step_order
+        )
     )
+
+    result = db.execute(stmt)
+
+    workflow_steps = result.scalars().all()
 
     for step in workflow_steps:
 
@@ -54,46 +60,46 @@ def get_execution(
     db: Session,
     execution_id: int
 ):
-    return (
-        db.query(WorkflowInstance)
-        .filter(
-            WorkflowInstance.id == execution_id
-        )
-        .first()
+    stmt = select(WorkflowInstance).where(
+        WorkflowInstance.id == execution_id
     )
+
+    result = db.execute(stmt)
+
+    return result.scalar_one_or_none()
 
 
 def get_pending_executions(
     db: Session
 ):
-    return (
-        db.query(WorkflowInstance)
-        .filter(
-            WorkflowInstance.status == "Pending"
-        )
-        .all()
+    stmt = select(WorkflowInstance).where(
+        WorkflowInstance.status == "Pending"
     )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_completed_executions(
     db: Session
 ):
-    return (
-        db.query(WorkflowInstance)
-        .filter(
-            WorkflowInstance.status == "Completed"
-        )
-        .all()
+    stmt = select(WorkflowInstance).where(
+        WorkflowInstance.status == "Completed"
     )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_rejected_executions(
     db: Session
 ):
-    return (
-        db.query(WorkflowInstance)
-        .filter(
-            WorkflowInstance.status == "Rejected"
-        )
-        .all()
+    stmt = select(WorkflowInstance).where(
+        WorkflowInstance.status == "Rejected"
     )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()

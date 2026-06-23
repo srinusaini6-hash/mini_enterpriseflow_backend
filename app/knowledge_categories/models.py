@@ -1,8 +1,11 @@
+from datetime import datetime
+
 from sqlalchemy import (
     Integer,
     String,
     Text,
-    Boolean
+    Boolean,
+    DateTime
 )
 
 from sqlalchemy.orm import (
@@ -13,8 +16,8 @@ from sqlalchemy.orm import (
 from app.database.database import Base
 
 
-class WorkflowTemplate(Base):
-    __tablename__ = "workflow_templates"
+class KnowledgeCategory(Base):
+    __tablename__ = "knowledge_categories"
 
     id: Mapped[int] = mapped_column(
         Integer,
@@ -24,7 +27,8 @@ class WorkflowTemplate(Base):
 
     tenant_id: Mapped[int] = mapped_column(
         Integer,
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     name: Mapped[str] = mapped_column(
@@ -37,12 +41,23 @@ class WorkflowTemplate(Base):
         nullable=True
     )
 
-    module_name: Mapped[str] = mapped_column(
-        String(255),
-        nullable=False
-    )
-
     is_active: Mapped[bool] = mapped_column(
         Boolean,
         default=True
+    )
+
+    created_by: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow
+    )
+
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
     )

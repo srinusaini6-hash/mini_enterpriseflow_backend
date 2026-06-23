@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
-from app.workflow_audit_logs.models import (
-    WorkflowAuditLog
-)
+from app.workflow_audit_logs.models import WorkflowAuditLog
 
 
 def create_audit_log(
@@ -26,29 +25,37 @@ def create_audit_log(
     return log
 
 
-def get_all_logs(db: Session):
-    return db.query(
-        WorkflowAuditLog
-    ).all()
+def get_all_logs(
+    db: Session
+):
+    stmt = select(WorkflowAuditLog)
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_logs_by_execution(
     db: Session,
     execution_id: int
 ):
-    return db.query(
-        WorkflowAuditLog
-    ).filter(
+    stmt = select(WorkflowAuditLog).where(
         WorkflowAuditLog.execution_id == execution_id
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_logs_by_action(
     db: Session,
     action: str
 ):
-    return db.query(
-        WorkflowAuditLog
-    ).filter(
+    stmt = select(WorkflowAuditLog).where(
         WorkflowAuditLog.action == action
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()

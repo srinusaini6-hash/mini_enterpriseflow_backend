@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_conditions.models import (
     WorkflowCondition
@@ -28,12 +29,14 @@ def get_conditions(
     db: Session,
     workflow_template_id: int
 ):
-    return db.query(
-        WorkflowCondition
-    ).filter(
+    stmt = select(WorkflowCondition).where(
         WorkflowCondition.workflow_template_id
         == workflow_template_id
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def update_condition(
@@ -41,11 +44,13 @@ def update_condition(
     condition_id: int,
     payload
 ):
-    condition = db.query(
-        WorkflowCondition
-    ).filter(
+    stmt = select(WorkflowCondition).where(
         WorkflowCondition.id == condition_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    condition = result.scalar_one_or_none()
 
     if not condition:
         return None
@@ -64,11 +69,13 @@ def delete_condition(
     db: Session,
     condition_id: int
 ):
-    condition = db.query(
-        WorkflowCondition
-    ).filter(
+    stmt = select(WorkflowCondition).where(
         WorkflowCondition.id == condition_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    condition = result.scalar_one_or_none()
 
     if not condition:
         return None

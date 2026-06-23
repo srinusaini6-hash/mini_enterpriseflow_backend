@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_instances.models import WorkflowInstance
 
@@ -7,11 +8,13 @@ def approve_workflow(
     db: Session,
     execution_id: int
 ):
-    workflow = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalar_one_or_none()
 
     if not workflow:
         return None
@@ -28,11 +31,13 @@ def reject_workflow(
     db: Session,
     execution_id: int
 ):
-    workflow = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalar_one_or_none()
 
     if not workflow:
         return None
@@ -49,11 +54,13 @@ def hold_workflow(
     db: Session,
     execution_id: int
 ):
-    workflow = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalar_one_or_none()
 
     if not workflow:
         return None
@@ -70,11 +77,13 @@ def resume_workflow(
     db: Session,
     execution_id: int
 ):
-    workflow = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalar_one_or_none()
 
     if not workflow:
         return None
@@ -91,11 +100,13 @@ def cancel_workflow(
     db: Session,
     execution_id: int
 ):
-    workflow = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalar_one_or_none()
 
     if not workflow:
         return None

@@ -1,27 +1,31 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 from app.workflow_instances.models import WorkflowInstance
 
 
-def get_summary(db: Session):
-    total = db.query(WorkflowInstance).count()
+def get_summary(
+    db: Session
+):
+    stmt = select(WorkflowInstance)
 
-    completed = db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Completed"
-    ).count()
+    result = db.execute(stmt)
 
-    pending = db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Pending"
-    ).count()
+    workflows = result.scalars().all()
 
-    rejected = db.query(
-        WorkflowInstance
-    ).filter(
-        WorkflowInstance.status == "Rejected"
-    ).count()
+    total = len(workflows)
+
+    completed = len(
+        [w for w in workflows if w.status == "Completed"]
+    )
+
+    pending = len(
+        [w for w in workflows if w.status == "Pending"]
+    )
+
+    rejected = len(
+        [w for w in workflows if w.status == "Rejected"]
+    )
 
     return {
         "total_workflows": total,
@@ -35,19 +39,23 @@ def get_by_status(
     db: Session,
     status: str
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == status
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_by_execution(
     db: Session,
     execution_id: int
 ):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalar_one_or_none()

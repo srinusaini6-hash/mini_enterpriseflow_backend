@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_notifications.models import (
     WorkflowNotification
@@ -25,31 +26,37 @@ def create_notification(
 def get_notifications(
     db: Session
 ):
-    return db.query(
-        WorkflowNotification
-    ).all()
+    stmt = select(WorkflowNotification)
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_notification(
     db: Session,
     notification_id: int
 ):
-    return db.query(
-        WorkflowNotification
-    ).filter(
+    stmt = select(WorkflowNotification).where(
         WorkflowNotification.id == notification_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalar_one_or_none()
 
 
 def get_user_notifications(
     db: Session,
     user_name: str
 ):
-    return db.query(
-        WorkflowNotification
-    ).filter(
+    stmt = select(WorkflowNotification).where(
         WorkflowNotification.user_name == user_name
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def mark_as_read(

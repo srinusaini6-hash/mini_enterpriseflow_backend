@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_assignments.models import WorkflowAssignment
+
 from app.workflow_instances.models import WorkflowInstance
 
 
@@ -8,11 +10,13 @@ def get_assignees(
     db: Session,
     execution_id: int
 ):
-    return db.query(
-        WorkflowAssignment
-    ).filter(
+    stmt = select(WorkflowAssignment).where(
         WorkflowAssignment.execution_id == execution_id
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def reassign_workflow(
@@ -21,11 +25,13 @@ def reassign_workflow(
     assigned_to: str,
     assigned_by: str
 ):
-    execution = db.query(
-        WorkflowInstance
-    ).filter(
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.id == execution_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    execution = result.scalar_one_or_none()
 
     if not execution:
         return None
@@ -48,8 +54,10 @@ def get_history(
     db: Session,
     execution_id: int
 ):
-    return db.query(
-        WorkflowAssignment
-    ).filter(
+    stmt = select(WorkflowAssignment).where(
         WorkflowAssignment.execution_id == execution_id
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()

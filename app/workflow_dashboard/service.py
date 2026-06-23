@@ -1,13 +1,17 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_instances.models import WorkflowInstance
 
 
-def get_dashboard_summary(db: Session):
+def get_dashboard_summary(
+    db: Session
+):
+    stmt = select(WorkflowInstance)
 
-    workflows = db.query(
-        WorkflowInstance
-    ).all()
+    result = db.execute(stmt)
+
+    workflows = result.scalars().all()
 
     total = len(workflows)
 
@@ -36,33 +40,49 @@ def get_dashboard_summary(db: Session):
     }
 
 
-def get_pending(db: Session):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+def get_pending(
+    db: Session
+):
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == "Pending"
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
-def get_completed(db: Session):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+def get_completed(
+    db: Session
+):
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == "Completed"
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
-def get_rejected(db: Session):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+def get_rejected(
+    db: Session
+):
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == "Rejected"
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
-def get_overdue(db: Session):
-    return db.query(
-        WorkflowInstance
-    ).filter(
+def get_overdue(
+    db: Session
+):
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == "Overdue"
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()

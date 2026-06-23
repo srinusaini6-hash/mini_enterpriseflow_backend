@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_templates.models import WorkflowTemplate
 
@@ -24,20 +25,24 @@ def create_workflow_template(
 def get_workflow_templates(
     db: Session
 ):
-    return db.query(
-        WorkflowTemplate
-    ).all()
+    stmt = select(WorkflowTemplate)
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def get_workflow_template(
     db: Session,
     template_id: int
 ):
-    return db.query(
-        WorkflowTemplate
-    ).filter(
+    stmt = select(WorkflowTemplate).where(
         WorkflowTemplate.id == template_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().first()
 
 
 def update_workflow_template(
@@ -45,11 +50,13 @@ def update_workflow_template(
     template_id: int,
     payload
 ):
-    workflow = db.query(
-        WorkflowTemplate
-    ).filter(
+    stmt = select(WorkflowTemplate).where(
         WorkflowTemplate.id == template_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalars().first()
 
     if not workflow:
         return None
@@ -70,11 +77,13 @@ def delete_workflow_template(
     db: Session,
     template_id: int
 ):
-    workflow = db.query(
-        WorkflowTemplate
-    ).filter(
+    stmt = select(WorkflowTemplate).where(
         WorkflowTemplate.id == template_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    workflow = result.scalars().first()
 
     if not workflow:
         return None

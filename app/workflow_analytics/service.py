@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.workflow_templates.models import WorkflowTemplate
 
@@ -9,11 +10,14 @@ from app.workflow_instances.workflow_instance_steps.models import (
 )
 
 
-def template_usage(db: Session):
+def template_usage(
+    db: Session
+):
+    stmt = select(WorkflowTemplate)
 
-    templates = db.query(
-        WorkflowTemplate
-    ).all()
+    result = db.execute(stmt)
+
+    templates = result.scalars().all()
 
     return [
         {
@@ -24,36 +28,45 @@ def template_usage(db: Session):
     ]
 
 
-def execution_stats(db: Session):
+def execution_stats(
+    db: Session
+):
+    stmt = select(WorkflowInstance)
 
-    executions = db.query(
-        WorkflowInstance
-    ).all()
+    result = db.execute(stmt)
+
+    executions = result.scalars().all()
 
     return {
         "total_executions": len(executions)
     }
 
 
-def approver_workload(db: Session):
+def approver_workload(
+    db: Session
+):
+    stmt = select(WorkflowInstanceStep)
 
-    steps = db.query(
-        WorkflowInstanceStep
-    ).all()
+    result = db.execute(stmt)
+
+    steps = result.scalars().all()
 
     return {
         "assigned_steps": len(steps)
     }
 
 
-def completion_time(db: Session):
-
-    completed = db.query(
-        WorkflowInstance
-    ).filter(
+def completion_time(
+    db: Session
+):
+    stmt = select(WorkflowInstance).where(
         WorkflowInstance.status == "Completed"
-    ).count()
+    )
+
+    result = db.execute(stmt)
+
+    completed = result.scalars().all()
 
     return {
-        "completed_workflows": completed
+        "completed_workflows": len(completed)
     }

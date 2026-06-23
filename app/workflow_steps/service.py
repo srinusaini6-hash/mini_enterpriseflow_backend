@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
-from app.workflow_steps.models import (
-    WorkflowStep
-)
+from app.workflow_steps.models import WorkflowStep
 
 
 def create_workflow_step(
@@ -29,11 +28,13 @@ def get_workflow_steps(
     db: Session,
     template_id: int
 ):
-    return db.query(
-        WorkflowStep
-    ).filter(
+    stmt = select(WorkflowStep).where(
         WorkflowStep.workflow_template_id == template_id
-    ).all()
+    )
+
+    result = db.execute(stmt)
+
+    return result.scalars().all()
 
 
 def update_workflow_step(
@@ -41,11 +42,13 @@ def update_workflow_step(
     step_id: int,
     payload
 ):
-    step = db.query(
-        WorkflowStep
-    ).filter(
+    stmt = select(WorkflowStep).where(
         WorkflowStep.id == step_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    step = result.scalar_one_or_none()
 
     if not step:
         return None
@@ -65,11 +68,13 @@ def delete_workflow_step(
     db: Session,
     step_id: int
 ):
-    step = db.query(
-        WorkflowStep
-    ).filter(
+    stmt = select(WorkflowStep).where(
         WorkflowStep.id == step_id
-    ).first()
+    )
+
+    result = db.execute(stmt)
+
+    step = result.scalar_one_or_none()
 
     if not step:
         return None

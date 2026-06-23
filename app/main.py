@@ -251,6 +251,14 @@ from app.workflow_analytics.routes import (
     router as workflow_analytics_router
 )
 
+from app.knowledge_categories.models import (
+    KnowledgeCategory
+)
+
+from app.knowledge_categories.routes import (
+    router as knowledge_category_router
+)
+
 
 # ---------------- CREATE FASTAPI APP ----------------
 
@@ -258,6 +266,9 @@ app = FastAPI(
     title="Mini EnterpriseFlow Backend",
     version="1.0.0"
 )
+
+
+
 
 
 # ---------------- RATE LIMITER ----------------
@@ -363,8 +374,6 @@ app.include_router(mention_router)
 app.include_router(presence_router)
 
 app.include_router(message_search_router)
-
-app.include_router(message_search_router)
 app.include_router(message_router)
 
 app.include_router(
@@ -403,6 +412,10 @@ app.include_router(
 
 app.include_router(
     workflow_analytics_router
+)
+
+app.include_router(
+    knowledge_category_router
 )
 
 
