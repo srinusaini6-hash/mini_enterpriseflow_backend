@@ -259,6 +259,40 @@ from app.knowledge_categories.routes import (
     router as knowledge_category_router
 )
 
+from app.knowledge_articles.models import KnowledgeArticle
+
+from app.knowledge_articles.routes import (
+    router as knowledge_article_router
+)
+
+from app.knowledge_articles.models import KnowledgeArticle
+
+from app.knowledge_tags.models import KnowledgeTag
+
+from app.knowledge_tags.routes import (
+    router as knowledge_tag_router
+)
+
+from app.knowledge_attachments.models import (
+    KnowledgeAttachment
+)
+
+from app.knowledge_attachments.routes import (
+    router as knowledge_attachment_router
+)
+
+from app.knowledge_article_versions.router import router as knowledge_version_router
+
+from app.knowledge_comments.router import router as knowledge_comments_router
+
+from app.knowledge_ratings.router import (
+    router as knowledge_rating_router
+)
+
+from app.knowledge_search.models import KnowledgeSearch
+from app.knowledge_search.router import router as knowledge_search_router
+
+
 
 # ---------------- CREATE FASTAPI APP ----------------
 
@@ -417,6 +451,36 @@ app.include_router(
 app.include_router(
     knowledge_category_router
 )
+
+app.include_router(
+    knowledge_article_router
+)
+
+app.include_router(
+    knowledge_tag_router
+)
+
+app.include_router(
+    knowledge_attachment_router
+)
+
+app.include_router(
+    knowledge_version_router
+)
+
+app.include_router(
+    knowledge_comments_router
+)
+
+app.include_router(
+    knowledge_rating_router
+)
+
+app.include_router(
+    knowledge_search_router
+)
+
+app.include_router(knowledge_search_router)
 
 
 # ---------------- ENABLE PAGINATION ----------------
