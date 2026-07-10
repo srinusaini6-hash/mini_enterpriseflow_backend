@@ -292,7 +292,18 @@ from app.knowledge_ratings.router import (
 from app.knowledge_search.models import KnowledgeSearch
 from app.knowledge_search.router import router as knowledge_search_router
 
+from app.analytics.routes import router as analytics_router
 
+from app.analytics.routes import router as analytics_router
+from app.sla_analytics.routes import router as sla_analytics_router
+
+from app.document_analytics.routes import router as document_analytics_router
+
+from app.productivity_reports.routes import router as productivity_reports_router
+
+from app.report_exports.routes import router as report_exports_router
+
+from app.ai_insights.routes import router as ai_insights_router
 
 # ---------------- CREATE FASTAPI APP ----------------
 
@@ -482,6 +493,18 @@ app.include_router(
 
 app.include_router(knowledge_search_router)
 
+app.include_router(analytics_router)
+
+app.include_router(analytics_router)
+app.include_router(sla_analytics_router)
+
+app.include_router(document_analytics_router)
+
+app.include_router(productivity_reports_router)
+
+app.include_router(report_exports_router)
+
+app.include_router(ai_insights_router)
 
 # ---------------- ENABLE PAGINATION ----------------
 

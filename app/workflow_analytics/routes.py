@@ -1,15 +1,9 @@
 from fastapi import APIRouter, Depends
-
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
 
-from app.workflow_analytics.service import (
-    template_usage,
-    execution_stats,
-    approver_workload,
-    completion_time
-)
+from app.workflow_analytics.services import WorkflowAnalyticsService
 
 router = APIRouter(
     prefix="/workflow-analytics",
@@ -21,25 +15,25 @@ router = APIRouter(
 def analytics_templates(
     db: Session = Depends(get_db)
 ):
-    return template_usage(db)
+    return WorkflowAnalyticsService.template_usage(db)
 
 
 @router.get("/executions")
 def analytics_executions(
     db: Session = Depends(get_db)
 ):
-    return execution_stats(db)
+    return WorkflowAnalyticsService.execution_stats(db)
 
 
 @router.get("/approvers")
 def analytics_approvers(
     db: Session = Depends(get_db)
 ):
-    return approver_workload(db)
+    return WorkflowAnalyticsService.approver_workload(db)
 
 
 @router.get("/completion-time")
 def analytics_completion_time(
     db: Session = Depends(get_db)
 ):
-    return completion_time(db)
+    return WorkflowAnalyticsService.completion_time(db)

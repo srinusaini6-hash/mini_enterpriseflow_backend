@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from sqlalchemy import (
     Integer,
     String,
     Text,
     Boolean,
-    DateTime
+    DateTime,
+    func
 )
 
 from sqlalchemy.orm import (
@@ -25,55 +28,71 @@ class ApprovalRequest(Base):
     )
 
     request_type: Mapped[str] = mapped_column(
-        String(100)
+        String(100),
+        nullable=False
     )
 
     reason: Mapped[str] = mapped_column(
-        Text
+        Text,
+        nullable=False
     )
 
     amount: Mapped[int] = mapped_column(
-        Integer
+        Integer,
+        nullable=False
     )
 
     status: Mapped[str] = mapped_column(
         String(50),
-        default="PENDING"
+        default="PENDING",
+        nullable=False
     )
 
     submitted_by: Mapped[int] = mapped_column(
-        Integer
+        Integer,
+        nullable=False
     )
 
     current_approver: Mapped[str] = mapped_column(
-        String(50)
+        String(50),
+        nullable=False
     )
 
-    comments: Mapped[str] = mapped_column(
+    comments: Mapped[str | None] = mapped_column(
         Text,
         nullable=True
     )
 
-    # TASK 4 FIELDS
+    # ---------------- TASK 4 FIELDS ----------------
 
-    sla_status: Mapped[str] = mapped_column(
+    sla_status: Mapped[str | None] = mapped_column(
         String(50),
         nullable=True
     )
 
-    sla_due_time: Mapped[DateTime] = mapped_column(
+    sla_due_time: Mapped[datetime | None] = mapped_column(
         DateTime,
         nullable=True
     )
 
     is_escalated: Mapped[bool] = mapped_column(
         Boolean,
-        default=False
+        default=False,
+        nullable=False
     )
 
-    current_escalation_to: Mapped[int] = mapped_column(
+    current_escalation_to: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True
+    )
+
+    # ---------------- ANALYTICS FIELD ----------------
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
+        index=True
     )
 
 
@@ -88,17 +107,21 @@ class ApprovalHistory(Base):
     )
 
     request_id: Mapped[int] = mapped_column(
-        Integer
+        Integer,
+        nullable=False
     )
 
     action: Mapped[str] = mapped_column(
-        String(50)
+        String(50),
+        nullable=False
     )
 
     comment: Mapped[str] = mapped_column(
-        Text
+        Text,
+        nullable=False
     )
 
     action_by: Mapped[int] = mapped_column(
-        Integer
+        Integer,
+        nullable=False
     )
