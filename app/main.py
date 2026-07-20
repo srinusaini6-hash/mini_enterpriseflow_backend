@@ -305,6 +305,31 @@ from app.report_exports.routes import router as report_exports_router
 
 from app.ai_insights.routes import router as ai_insights_router
 
+from app.integration_providers.routes import (
+    router as integration_providers_router,
+)
+
+from app.tenant_integrations.routes import (
+    router as tenant_integrations_router,
+)
+
+from app.integration_credentials.routes import (
+    router as integration_credentials_router,
+)
+
+from app.webhook_events.routes import (
+    router as webhook_events_router,
+)
+
+from app.sync_jobs.routes import router as sync_jobs_router
+
+from app.integration_health.routes import router as integration_health_router
+
+from app.integration_audit_logs.routes import (
+    router as integration_audit_logs_router,
+)
+
+
 # ---------------- CREATE FASTAPI APP ----------------
 
 app = FastAPI(
@@ -505,6 +530,24 @@ app.include_router(productivity_reports_router)
 app.include_router(report_exports_router)
 
 app.include_router(ai_insights_router)
+
+app.include_router(integration_providers_router)
+
+app.include_router(
+    tenant_integrations_router
+)
+
+app.include_router(
+    integration_credentials_router
+)
+
+app.include_router(webhook_events_router)
+
+app.include_router(sync_jobs_router)
+
+app.include_router(integration_health_router)
+
+app.include_router(integration_audit_logs_router)
 
 # ---------------- ENABLE PAGINATION ----------------
 
